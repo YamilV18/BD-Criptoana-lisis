@@ -66,3 +66,39 @@ services:
       - ./notebooks:/home/jovyan/work
     depends_on:
       - kafka
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.8.0
+    container_name: cripto-kafka-exporter
+    restart: unless-stopped
+    command:
+      - "--kafka.server=kafka:9092"
+    ports:
+      - "9308:9308"
+    depends_on:
+      - kafka
+
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    container_name: cripto-prometheus
+    restart: unless-stopped
+    ports:
+      - "49090:9090"
+    volumes:
+      - ./obs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - kafka-exporter
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: cripto-grafana
+    restart: unless-stopped
+    ports:
+      - "43000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./obs/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus

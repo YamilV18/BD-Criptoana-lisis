@@ -102,3 +102,10 @@ services:
       - ./obs/grafana/provisioning:/etc/grafana/provisioning:ro
     depends_on:
       - prometheus
+
+  pushgateway:
+    image: prom/pushgateway:v1.11.1
+    container_name: cripto-pushgateway
+    restart: unless-stopped
+    ports:
+      - "49091:9091"

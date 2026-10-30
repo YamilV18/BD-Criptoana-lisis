@@ -1,0 +1,2739 @@
+{
+ "title": "Cripto-Analytics U2 - Capa Streaming (preguntas de negocio)",
+ "uid": "cripto-u2-streaming",
+ "tags": [
+  "proyecto-sello",
+  "unidad-2",
+  "streaming"
+ ],
+ "timezone": "browser",
+ "schemaVersion": 39,
+ "version": 1,
+ "editable": true,
+ "refresh": "10s",
+ "time": {
+  "from": "now-15m",
+  "to": "now"
+ },
+ "templating": {
+  "list": [
+   {
+    "name": "instance",
+    "label": "Integrante",
+    "type": "query",
+    "datasource": {
+     "type": "prometheus",
+     "uid": "${DS_PROMETHEUS}"
+    },
+    "definition": "label_values(cripto_live_trades_total_maker_buy, instance)",
+    "query": {
+     "query": "label_values(cripto_live_trades_total_maker_buy, instance)",
+     "refId": "StandardVariableQuery"
+    },
+    "refresh": 2,
+    "sort": 1,
+    "multi": false,
+    "includeAll": false,
+    "current": {
+     "selected": false,
+     "text": "integrante1",
+     "value": "integrante1"
+    }
+   }
+  ]
+ },
+ "panels": [
+  {
+   "id": 1,
+   "type": "row",
+   "title": "PREGUNTA CENTRAL - ¿Cómo se comporta el volumen operado en BTC/USDT y qué tan predecible es el monto de una operación? (capa streaming)",
+   "collapsed": false,
+   "gridPos": {
+    "h": 1,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "panels": []
+  },
+  {
+   "id": 2,
+   "type": "text",
+   "title": "",
+   "gridPos": {
+    "h": 2,
+    "w": 24,
+    "x": 0,
+    "y": 1
+   },
+   "options": {
+    "mode": "markdown",
+    "content": "**Dimensión descriptiva (U1) en vivo:** volumen y balance maker/taker del flujo real, contrastado con la referencia batch del 2026-01-05. **Dimensión predictiva:** error del modelo frente a la persistencia. Selecciona el integrante en la variable `instance`."
+   }
+  },
+  {
+   "id": 3,
+   "type": "stat",
+   "title": "Brokers Kafka vivos",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 0,
+    "y": 3
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "kafka_brokers",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   },
+   "description": "Infraestructura: debe ser 1"
+  },
+  {
+   "id": 4,
+   "type": "stat",
+   "title": "Eventos/s en el topic",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 3,
+    "y": 3
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum(rate(kafka_topic_partition_current_offset{topic=\"binance-btc-trades\"}[1m]))",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "decimals": 1
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 5,
+   "type": "stat",
+   "title": "Latencia Spark (ms)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 6,
+    "y": 3
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_spark_latencia_prom_ms{instance=\"$instance\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "ms"
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   },
+   "description": "Hora del trade en Binance -> procesamiento en Spark"
+  },
+  {
+   "id": 6,
+   "type": "stat",
+   "title": "BATCH: % volumen MAKER_BUY (U1)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 4,
+    "x": 9,
+    "y": 3
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_batch_share_maker_buy_usdt{instance=\"$instance\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "decimals": 1
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   },
+   "description": "Referencia estática calculada desde el Silver de U1"
+  },
+  {
+   "id": 7,
+   "type": "stat",
+   "title": "STREAMING: % volumen MAKER_BUY (en vivo)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 4,
+    "x": 13,
+    "y": 3
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_live_share_maker_buy_usdt{instance=\"$instance\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "decimals": 1
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   },
+   "description": "Acumulado desde que arrancó el notebook"
+  },
+  {
+   "id": 8,
+   "type": "stat",
+   "title": "Operaciones evaluadas (modelo U1)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 17,
+    "y": 3
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_trades_evaluados_total{instance=\"$instance\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 9,
+   "type": "stat",
+   "title": "Barras cerradas (serie de tiempo)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 4,
+    "x": 20,
+    "y": 3
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_barras_total{instance=\"$instance\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 10,
+   "type": "timeseries",
+   "title": "Volumen operado por minuto y rol (USDT, en vivo)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 0,
+    "y": 7
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "delta(cripto_live_volumen_usdt_total_maker_buy{instance=\"$instance\"}[1m])",
+     "legendFormat": "MAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "delta(cripto_live_volumen_usdt_total_taker_buy{instance=\"$instance\"}[1m])",
+     "legendFormat": "TAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "¿Cómo se comporta el volumen? Evolución minuto a minuto por rol"
+  },
+  {
+   "id": 11,
+   "type": "timeseries",
+   "title": "Balance maker/taker: streaming vs batch (operaciones)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 8,
+    "y": 7
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_live_share_maker_buy_ops{instance=\"$instance\"}",
+     "legendFormat": "streaming (en vivo)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_batch_share_maker_buy_ops{instance=\"$instance\"}",
+     "legendFormat": "batch U1 (referencia)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "El informe U1 reportó ~46% / 54%"
+  },
+  {
+   "id": 12,
+   "type": "timeseries",
+   "title": "Latencia y filas por microlote (Spark)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 16,
+    "y": 7
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_spark_latencia_prom_ms{instance=\"$instance\"}",
+     "legendFormat": "latencia promedio (ms)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_spark_latencia_max_ms{instance=\"$instance\"}",
+     "legendFormat": "latencia máxima (ms)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "ms",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 13,
+   "type": "timeseries",
+   "title": "¿Qué tan predecible? Error de la serie de tiempo: modelo vs persistencia",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 0,
+    "y": 15
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_mae_modelo{instance=\"$instance\"}",
+     "legendFormat": "MAE modelo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_mae_persistencia{instance=\"$instance\"}",
+     "legendFormat": "MAE persistencia (baseline)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "Si el modelo no baja del baseline, no aporta valor sobre 'la próxima barra es igual a la actual'"
+  },
+  {
+   "id": 14,
+   "type": "timeseries",
+   "title": "Eventos/s (Kafka) vs filas por lote (Spark)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 12,
+    "y": 15
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum(rate(kafka_topic_partition_current_offset{topic=\"binance-btc-trades\"}[1m]))",
+     "legendFormat": "Kafka: eventos/s",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_spark_filas_lote{instance=\"$instance\"}",
+     "legendFormat": "Spark: filas del último microlote",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "Correlación de métricas: lo que entra al topic frente a lo que procesa Spark"
+  },
+  {
+   "id": 15,
+   "type": "row",
+   "title": "INTEGRANTE 1 - ¿Cómo influyen el precio, la cantidad (qty) y el rol del ejecutor en el monto total (USDT) por transacción?",
+   "collapsed": false,
+   "gridPos": {
+    "h": 1,
+    "w": 24,
+    "x": 0,
+    "y": 23
+   },
+   "panels": []
+  },
+  {
+   "id": 16,
+   "type": "text",
+   "title": "",
+   "gridPos": {
+    "h": 2,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "options": {
+    "mode": "markdown",
+    "content": "Modelo U1 (regresión de `quote_qty`) desplegado en vivo. **Influencia del rol:** monto medio y error por rol. **Predictibilidad:** R² y MAE en producción."
+   }
+  },
+  {
+   "id": 17,
+   "type": "stat",
+   "title": "R² en vivo",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 0,
+    "y": 26
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_r2_acum{instance=\"integrante1\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "decimals": 4
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 18,
+   "type": "stat",
+   "title": "MAE (USDT)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 3,
+    "y": 26
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_mae_acum{instance=\"integrante1\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "decimals": 2
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 19,
+   "type": "stat",
+   "title": "RMSE (USDT)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 6,
+    "y": 26
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_rmse_acum{instance=\"integrante1\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "decimals": 2
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 20,
+   "type": "timeseries",
+   "title": "Monto medio por operación y rol: streaming vs batch",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 15,
+    "x": 9,
+    "y": 26
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_live_monto_medio_usdt_maker_buy{instance=\"integrante1\"}",
+     "legendFormat": "MAKER_BUY en vivo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_live_monto_medio_usdt_taker_buy{instance=\"integrante1\"}",
+     "legendFormat": "TAKER_BUY en vivo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "C",
+     "expr": "cripto_batch_monto_medio_usdt_maker_buy{instance=\"integrante1\"}",
+     "legendFormat": "MAKER_BUY batch",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "D",
+     "expr": "cripto_batch_monto_medio_usdt_taker_buy{instance=\"integrante1\"}",
+     "legendFormat": "TAKER_BUY batch",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "¿Influye el rol en el monto? Compara los dos roles y contra la referencia batch"
+  },
+  {
+   "id": 21,
+   "type": "timeseries",
+   "title": "Último monto: real vs predicho (USDT)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 9,
+    "x": 0,
+    "y": 30
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_ultimo_real{instance=\"integrante1\"}",
+     "legendFormat": "real",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_ultimo_pred{instance=\"integrante1\"}",
+     "legendFormat": "predicho",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 22,
+   "type": "timeseries",
+   "title": "Error absoluto medio por rol (USDT)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 15,
+    "x": 9,
+    "y": 34
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_mae_maker_buy{instance=\"integrante1\"}",
+     "legendFormat": "MAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_mae_taker_buy{instance=\"integrante1\"}",
+     "legendFormat": "TAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 23,
+   "type": "timeseries",
+   "title": "Volumen USDT de la próxima barra: predicción vs real",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 0,
+    "y": 42
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_pred_proxima_barra{instance=\"integrante1\"} offset 10s",
+     "legendFormat": "predicción (desplazada a su barra)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_real_ultima_barra{instance=\"integrante1\"}",
+     "legendFormat": "real",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "La predicción se hace a t para t+10 s; el desplazamiento la alinea con la barra que predice"
+  },
+  {
+   "id": 24,
+   "type": "timeseries",
+   "title": "Error de la serie de tiempo (USDT)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 12,
+    "y": 42
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_error_abs_ultimo{instance=\"integrante1\"}",
+     "legendFormat": "error absoluto de la última barra",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 25,
+   "type": "row",
+   "title": "INTEGRANTE 2 - ¿Se puede clasificar probabilísticamente una operación institucional/ballena (> 50 000 USDT) según la liquidez y la dirección del ejecutor?",
+   "collapsed": false,
+   "gridPos": {
+    "h": 1,
+    "w": 24,
+    "x": 0,
+    "y": 50
+   },
+   "panels": []
+  },
+  {
+   "id": 26,
+   "type": "text",
+   "title": "",
+   "gridPos": {
+    "h": 2,
+    "w": 24,
+    "x": 0,
+    "y": 51
+   },
+   "options": {
+    "mode": "markdown",
+    "content": "Modelo U1 (clasificación de `es_ballena`) en vivo. **Dirección:** ballenas por rol. **Probabilístico:** probabilidad media asignada. **Calidad:** precisión y recall."
+   }
+  },
+  {
+   "id": 27,
+   "type": "stat",
+   "title": "Precisión en vivo",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 0,
+    "y": 53
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_precision_acum{instance=\"integrante2\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "decimals": 1
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 28,
+   "type": "stat",
+   "title": "Recall en vivo",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 3,
+    "y": 53
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_recall_acum{instance=\"integrante2\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "decimals": 1
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 29,
+   "type": "stat",
+   "title": "Ballenas reales",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 6,
+    "y": 53
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_ballenas_reales_total{instance=\"integrante2\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 30,
+   "type": "timeseries",
+   "title": "Ballenas: reales vs detectadas por el modelo (acumulado)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 15,
+    "x": 9,
+    "y": 53
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_ballenas_reales_total{instance=\"integrante2\"}",
+     "legendFormat": "reales",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_ballenas_detectadas_total{instance=\"integrante2\"}",
+     "legendFormat": "detectadas",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "C",
+     "expr": "cripto_u1_fp_total{instance=\"integrante2\"}",
+     "legendFormat": "falsos positivos",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "D",
+     "expr": "cripto_u1_fn_total{instance=\"integrante2\"}",
+     "legendFormat": "falsos negativos",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 31,
+   "type": "timeseries",
+   "title": "Ballenas por minuto y rol del ejecutor",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 9,
+    "x": 0,
+    "y": 57
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "delta(cripto_live_ballenas_total_maker_buy{instance=\"integrante2\"}[1m])",
+     "legendFormat": "MAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "delta(cripto_live_ballenas_total_taker_buy{instance=\"integrante2\"}[1m])",
+     "legendFormat": "TAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "¿Influye la dirección? Dónde se concentran las ballenas"
+  },
+  {
+   "id": 32,
+   "type": "timeseries",
+   "title": "Probabilidad media asignada: todas las operaciones vs ballenas reales",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 15,
+    "x": 9,
+    "y": 61
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_prob_media{instance=\"integrante2\"}",
+     "legendFormat": "P(ballena) media, todas",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_prob_media_ballenas{instance=\"integrante2\"}",
+     "legendFormat": "P(ballena) media, ballenas reales",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "Un buen clasificador asigna probabilidad alta a las ballenas reales y baja al resto"
+  },
+  {
+   "id": 33,
+   "type": "timeseries",
+   "title": "Proporción de ballenas: streaming vs batch",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 0,
+    "y": 65
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_live_ballenas_ratio{instance=\"integrante2\"}",
+     "legendFormat": "streaming",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_batch_ballenas_ratio{instance=\"integrante2\"}",
+     "legendFormat": "batch U1",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 34,
+   "type": "timeseries",
+   "title": "Ballenas de la próxima barra: predicción vs real",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 8,
+    "y": 69
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_pred_proxima_barra{instance=\"integrante2\"} offset 10s",
+     "legendFormat": "predicción",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_real_ultima_barra{instance=\"integrante2\"}",
+     "legendFormat": "real",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 35,
+   "type": "timeseries",
+   "title": "Error de la serie de tiempo: modelo vs persistencia",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 16,
+    "y": 69
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_mae_modelo{instance=\"integrante2\"}",
+     "legendFormat": "modelo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_mae_persistencia{instance=\"integrante2\"}",
+     "legendFormat": "persistencia",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 36,
+   "type": "row",
+   "title": "INTEGRANTE 3 - ¿Es posible predecir el rol de la orden (Maker Comprador vs. Maker Vendedor) según el tamaño del volumen y la fluctuación del precio?",
+   "collapsed": false,
+   "gridPos": {
+    "h": 1,
+    "w": 24,
+    "x": 0,
+    "y": 77
+   },
+   "panels": []
+  },
+  {
+   "id": 37,
+   "type": "text",
+   "title": "",
+   "gridPos": {
+    "h": 2,
+    "w": 24,
+    "x": 0,
+    "y": 78
+   },
+   "options": {
+    "mode": "markdown",
+    "content": "Modelo U1 (clasificación de `is_buyer_maker`) en vivo. **Predictibilidad:** acierto frente al baseline mayoritario. **Fluctuación del precio:** rango relativo y retorno de la barra."
+   }
+  },
+  {
+   "id": 38,
+   "type": "stat",
+   "title": "Accuracy en vivo",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 0,
+    "y": 80
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_accuracy_acum{instance=\"integrante3\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "decimals": 1
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 39,
+   "type": "stat",
+   "title": "Baseline mayoritario",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 3,
+    "y": 80
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_accuracy_baseline_acum{instance=\"integrante3\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "decimals": 1
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   },
+   "description": "Acierto de predecir siempre el rol más frecuente"
+  },
+  {
+   "id": 40,
+   "type": "timeseries",
+   "title": "Acierto del modelo vs baseline",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 18,
+    "x": 6,
+    "y": 80
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_accuracy_acum{instance=\"integrante3\"}",
+     "legendFormat": "modelo (acumulado)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_accuracy_lote{instance=\"integrante3\"}",
+     "legendFormat": "modelo (último lote)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "C",
+     "expr": "cripto_u1_accuracy_baseline_acum{instance=\"integrante3\"}",
+     "legendFormat": "baseline mayoritario",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "Si el modelo no supera al baseline, el rol no es predecible con variables observables (hallazgo de U1)"
+  },
+  {
+   "id": 41,
+   "type": "timeseries",
+   "title": "Proporción MAKER_BUY: real vs predicha",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 6,
+    "x": 0,
+    "y": 84
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_share_maker_real{instance=\"integrante3\"}",
+     "legendFormat": "real",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_share_maker_pred{instance=\"integrante3\"}",
+     "legendFormat": "predicha",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 42,
+   "type": "timeseries",
+   "title": "Fluctuación del precio por barra",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 0,
+    "y": 92
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_barra_rango_rel{instance=\"integrante3\"}",
+     "legendFormat": "rango relativo (max-min)/vwap",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_barra_retorno{instance=\"integrante3\"}",
+     "legendFormat": "retorno (cierre/apertura - 1)",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "Fluctuación del precio instantáneo (variable de la pregunta)"
+  },
+  {
+   "id": 43,
+   "type": "timeseries",
+   "title": "Tamaño medio de operación (BTC) por barra",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 8,
+    "y": 88
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_barra_qty_media{instance=\"integrante3\"}",
+     "legendFormat": "qty media",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 44,
+   "type": "timeseries",
+   "title": "% buyer_maker de la próxima barra: predicción vs real",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 16,
+    "y": 88
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_pred_proxima_barra{instance=\"integrante3\"} offset 10s",
+     "legendFormat": "predicción",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_real_ultima_barra{instance=\"integrante3\"}",
+     "legendFormat": "real",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 45,
+   "type": "timeseries",
+   "title": "Error de la serie de tiempo: modelo vs persistencia",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 12,
+    "x": 0,
+    "y": 100
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_mae_modelo{instance=\"integrante3\"}",
+     "legendFormat": "modelo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_mae_persistencia{instance=\"integrante3\"}",
+     "legendFormat": "persistencia",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 46,
+   "type": "timeseries",
+   "title": "Balance maker/taker: streaming vs batch",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 7,
+    "w": 12,
+    "x": 12,
+    "y": 96
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_live_share_maker_buy_ops{instance=\"integrante3\"}",
+     "legendFormat": "streaming",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_batch_share_maker_buy_ops{instance=\"integrante3\"}",
+     "legendFormat": "batch U1",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 47,
+   "type": "row",
+   "title": "INTEGRANTE 4 - ¿Cuál es la relación entre el volumen en BTC (qty) y el valor nominal en USDT (quote_qty), ajustada por el comportamiento del creador de mercado?",
+   "collapsed": false,
+   "gridPos": {
+    "h": 1,
+    "w": 24,
+    "x": 0,
+    "y": 107
+   },
+   "panels": []
+  },
+  {
+   "id": 48,
+   "type": "text",
+   "title": "",
+   "gridPos": {
+    "h": 2,
+    "w": 24,
+    "x": 0,
+    "y": 108
+   },
+   "options": {
+    "mode": "markdown",
+    "content": "Modelo U1 (regresión de `qty`) en vivo. **Relación qty/quote_qty por rol:** BTC por USDT para cada rol. **Predictibilidad:** R² y MAE en producción."
+   }
+  },
+  {
+   "id": 49,
+   "type": "stat",
+   "title": "R² en vivo",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 0,
+    "y": 110
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_r2_acum{instance=\"integrante4\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "decimals": 4
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 50,
+   "type": "stat",
+   "title": "MAE (BTC)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 3,
+    "y": 110
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_mae_acum{instance=\"integrante4\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "decimals": 6
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 51,
+   "type": "stat",
+   "title": "RMSE (BTC)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 4,
+    "w": 3,
+    "x": 6,
+    "y": 110
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_rmse_acum{instance=\"integrante4\"}",
+     "legendFormat": "",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "decimals": 6
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "area",
+    "textMode": "auto"
+   }
+  },
+  {
+   "id": 52,
+   "type": "timeseries",
+   "title": "Relación BTC por USDT según rol (≈ 1 / precio)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 15,
+    "x": 9,
+    "y": 110
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_live_volumen_btc_total_maker_buy{instance=\"integrante4\"} / cripto_live_volumen_usdt_total_maker_buy{instance=\"integrante4\"}",
+     "legendFormat": "MAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_live_volumen_btc_total_taker_buy{instance=\"integrante4\"} / cripto_live_volumen_usdt_total_taker_buy{instance=\"integrante4\"}",
+     "legendFormat": "TAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "description": "Relación de dependencia qty / quote_qty por rol del ejecutor"
+  },
+  {
+   "id": 53,
+   "type": "timeseries",
+   "title": "Último qty: real vs predicho (BTC)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 9,
+    "x": 0,
+    "y": 114
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_ultimo_real{instance=\"integrante4\"}",
+     "legendFormat": "real",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_ultimo_pred{instance=\"integrante4\"}",
+     "legendFormat": "predicho",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 54,
+   "type": "timeseries",
+   "title": "Cantidad media por operación y rol: streaming vs batch (BTC)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 0,
+    "y": 122
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_live_qty_media_btc_maker_buy{instance=\"integrante4\"}",
+     "legendFormat": "MAKER_BUY en vivo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_live_qty_media_btc_taker_buy{instance=\"integrante4\"}",
+     "legendFormat": "TAKER_BUY en vivo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "C",
+     "expr": "cripto_batch_qty_media_btc_maker_buy{instance=\"integrante4\"}",
+     "legendFormat": "MAKER_BUY batch",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "D",
+     "expr": "cripto_batch_qty_media_btc_taker_buy{instance=\"integrante4\"}",
+     "legendFormat": "TAKER_BUY batch",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 55,
+   "type": "timeseries",
+   "title": "Error absoluto medio por rol (BTC)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 12,
+    "y": 118
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_u1_mae_maker_buy{instance=\"integrante4\"}",
+     "legendFormat": "MAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_u1_mae_taker_buy{instance=\"integrante4\"}",
+     "legendFormat": "TAKER_BUY",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 56,
+   "type": "timeseries",
+   "title": "qty media de la próxima barra: predicción vs real",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 0,
+    "y": 130
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_pred_proxima_barra{instance=\"integrante4\"} offset 10s",
+     "legendFormat": "predicción",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_real_ultima_barra{instance=\"integrante4\"}",
+     "legendFormat": "real",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 57,
+   "type": "timeseries",
+   "title": "Error de la serie de tiempo: modelo vs persistencia",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS_PROMETHEUS}"
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 12,
+    "y": 126
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_ts_mae_modelo{instance=\"integrante4\"}",
+     "legendFormat": "modelo",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_ts_mae_persistencia{instance=\"integrante4\"}",
+     "legendFormat": "persistencia",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "${DS_PROMETHEUS}"
+     },
+     "interval": ""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short",
+     "custom": {
+      "lineWidth": 2,
+      "fillOpacity": 8,
+      "spanNulls": true
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  }
+ ],
+ "__inputs": [
+  {
+   "name": "DS_PROMETHEUS",
+   "label": "Prometheus",
+   "description": "",
+   "type": "datasource",
+   "pluginId": "prometheus",
+   "pluginName": "Prometheus"
+  }
+ ]
+}

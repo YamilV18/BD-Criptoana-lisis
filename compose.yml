@@ -58,10 +58,11 @@ services:
     restart: unless-stopped
     ports:
       - "8888:8888"
-      - "4040:4040"
+      - "4040-4043:4040-4043"
     environment:
       JUPYTER_ENABLE_LAB: "yes"
       JUPYTER_TOKEN: "criptoanalytics"
+      SPARK_DRIVER_MEMORY: "2g"
     volumes:
       - ./notebooks:/home/jovyan/work
     depends_on:

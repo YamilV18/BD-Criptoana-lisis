@@ -1,0 +1,274 @@
+{
+ "title": "CriptoAnalytics - Integraci\u00f3n U3",
+ "uid": "cripto-u3",
+ "schemaVersion": 39,
+ "refresh": "30s",
+ "time": {
+  "from": "now-6h",
+  "to": "now"
+ },
+ "templating": {
+  "list": [
+   {
+    "name": "DS",
+    "type": "datasource",
+    "query": "prometheus"
+   },
+   {
+    "name": "instance",
+    "type": "query",
+    "datasource": {
+     "type": "prometheus",
+     "uid": "${DS}"
+    },
+    "query": "label_values(cripto_int_ultima_ejecucion_timestamp, instance)",
+    "refresh": 2,
+    "includeAll": false
+   }
+  ]
+ },
+ "panels": [
+  {
+   "id": 1,
+   "type": "timeseries",
+   "title": "Latencia p50 vs p95 vs p99 (ms)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_int_batch_latencia_p50_ms{instance=\"$instance\"}",
+     "legendFormat": "p50"
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_int_batch_latencia_p95_ms{instance=\"$instance\"}",
+     "legendFormat": "p95"
+    },
+    {
+     "refId": "C",
+     "expr": "cripto_int_batch_latencia_p99_ms{instance=\"$instance\"}",
+     "legendFormat": "p99"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   }
+  },
+  {
+   "id": 2,
+   "type": "gauge",
+   "title": "Ratio de eventos v\u00e1lidos",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 6,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_int_batch_validos_ratio{instance=\"$instance\"}",
+     "legendFormat": "v\u00e1lidos"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit"
+    },
+    "overrides": []
+   }
+  },
+  {
+   "id": 3,
+   "type": "stat",
+   "title": "Antig\u00fcedad de la \u00faltima ejecuci\u00f3n",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 18,
+    "y": 0,
+    "w": 6,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "time() - cripto_int_ultima_ejecucion_timestamp{instance=\"$instance\"}",
+     "legendFormat": "segundos"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "s"
+    },
+    "overrides": []
+   }
+  },
+  {
+   "id": 4,
+   "type": "timeseries",
+   "title": "Indicador U1 vs U2",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 8,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_int_indicador_u1{instance=\"$instance\"}",
+     "legendFormat": "U1 offline"
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_int_indicador_u2{instance=\"$instance\"}",
+     "legendFormat": "U2 en vivo"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   }
+  },
+  {
+   "id": 5,
+   "type": "timeseries",
+   "title": "Serie de tiempo: MAE modelo vs persistencia",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 8,
+    "y": 8,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_int_ts_mae_modelo{instance=\"$instance\"}",
+     "legendFormat": "modelo"
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_int_ts_mae_persistencia{instance=\"$instance\"}",
+     "legendFormat": "persistencia"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   }
+  },
+  {
+   "id": 6,
+   "type": "stat",
+   "title": "Compuertas superadas",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 16,
+    "y": 8,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_int_compuertas_ok{instance=\"$instance\"}",
+     "legendFormat": "ok"
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_int_compuertas_total{instance=\"$instance\"}",
+     "legendFormat": "total"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   }
+  },
+  {
+   "id": 7,
+   "type": "timeseries",
+   "title": "Eventos procesados (batch / stream)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_int_batch_eventos_total{instance=\"$instance\"}",
+     "legendFormat": "batch"
+    },
+    {
+     "refId": "B",
+     "expr": "cripto_int_stream_filas_total{instance=\"$instance\"}",
+     "legendFormat": "stream"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   }
+  },
+  {
+   "id": 8,
+   "type": "timeseries",
+   "title": "Barras cerradas en stream",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "${DS}"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "cripto_int_stream_barras_cerradas{instance=\"$instance\"}",
+     "legendFormat": "barras"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   }
+  }
+ ]
+}

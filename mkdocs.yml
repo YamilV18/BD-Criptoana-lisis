@@ -1,0 +1,53 @@
+site_name: CriptoAnalytics · Proyecto Sello (BTC/USDT)
+site_description: Sistema Big Data (batch + streaming + observabilidad) sobre operaciones BTC/USDT de Binance. UPeU Juliaca, Big Data, Unidad III.
+site_author: Equipo Proyecto Sello
+# COMPLETAR: usuario y repositorio de GitHub
+site_url: https://USUARIO.github.io/REPOSITORIO/
+repo_url: https://github.com/USUARIO/REPOSITORIO
+repo_name: USUARIO/REPOSITORIO
+edit_uri: edit/main/docs/
+theme:
+  name: material
+  language: es
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: amber
+      toggle: { icon: material/weather-night, name: Modo oscuro }
+    - scheme: slate
+      primary: indigo
+      accent: amber
+      toggle: { icon: material/weather-sunny, name: Modo claro }
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - toc: { permalink: true }
+  - pymdownx.superfences
+  - pymdownx.details
+nav:
+  - Inicio: index.md
+  - Ejecución:
+      - Instalación y ejecución: instalacion.md
+      - Uso del sistema: uso.md
+  - Sistema:
+      - Arquitectura: arquitectura.md
+      - Módulos: modulos.md
+      - Datos: datos.md
+  - Verificación:
+      - Pruebas y evidencias: evidencias.md
+      - Hardening y riesgos: hardening.md
+  - Equipo:
+      - Aporte individual: equipo.md
+      - Bitácoras:
+          - Integrante 1: bitacoras/integrante1.md
+          - Integrante 2: bitacoras/integrante2.md
+          - Integrante 3: bitacoras/integrante3.md
+          - Integrante 4: bitacoras/integrante4.md
+  - Repositorio y estándares: repositorio.md
+  - Limitaciones y mejoras: limitaciones.md

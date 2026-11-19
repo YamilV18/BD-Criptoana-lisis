@@ -2,9 +2,9 @@ site_name: CriptoAnalytics · Proyecto Sello (BTC/USDT)
 site_description: Sistema Big Data (batch + streaming + observabilidad) sobre operaciones BTC/USDT de Binance. UPeU Juliaca, Big Data, Unidad III.
 site_author: Equipo Proyecto Sello
 # COMPLETAR: usuario y repositorio de GitHub
-site_url: https://USUARIO.github.io/REPOSITORIO/
-repo_url: https://github.com/USUARIO/REPOSITORIO
-repo_name: USUARIO/REPOSITORIO
+site_url: https://YamilV18.github.io/BD-Criptoana-lisis/
+repo_url: https://github.com/YamilV18/BD-Criptoana-lisis.git
+repo_name: YamilV18/BD-Criptoana-lisis
 edit_uri: edit/main/docs/
 theme:
   name: material

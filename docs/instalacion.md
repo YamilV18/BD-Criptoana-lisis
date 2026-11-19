@@ -13,7 +13,7 @@
 
 ```bash
 # 1. Clonar
-git clone https://github.com/USUARIO/REPOSITORIO.git && cd REPOSITORIO
+git clone https://github.com/YamilV18/BD-Criptoana-lisis.git && cd BD-Criptoana-lisis
 
 # 2. Configuración por variables (no se versiona el .env)
 cp .env.example .env        # cambiar contraseñas si no es un entorno de clase

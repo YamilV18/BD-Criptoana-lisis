@@ -1,7 +1,7 @@
 # CriptoAnalytics · Proyecto Sello
 
 **Curso:** Big Data · UPeU Juliaca · Ciclo IX · Docente: Abel Ángel Sullón Macalupu  
-**Repositorio:** [USUARIO/REPOSITORIO](https://github.com/USUARIO/REPOSITORIO) <!-- COMPLETAR -->
+**Repositorio:** [YamilV18/BD-Criptoana-lisis](https://github.com/YamilV18/BD-Criptoana-lisis.git)
 
 ## Problema
 
